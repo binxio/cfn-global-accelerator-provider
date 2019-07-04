@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: demo global load balancer
+
+Resources:
+  Accelerator:
+    Type: Custom::GlobalAccelerator
+    Properties:
+      Name: !Sub '${AWS::StackName}'
+      Enabled: true
+      IpAddressType: IPV4
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+
+  Listener:
+    Type: Custom::GlobalAcceleratorListener
+    Properties:
+      AcceleratorArn: !Ref Accelerator
+      Protocol: TCP
+      PortRanges:
+        - FromPort: 80
+          ToPort: 80
+      ClientAffinity: NONE
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+
+
+
+Outputs:
+  IpAddresses:
+    Value: !Sub '${Accelerator.IpAddresses}'
+  GlobalAcceleratorListener:
+    Value: !Ref Listener

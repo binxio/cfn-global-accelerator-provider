@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function list_accelerators {
+	aws --region us-west-2 globalaccelerator \
+	    list-accelerators \
+	    --query 'join(`\n`, Accelerators[?starts_with(Name, `test-`)].AcceleratorArn)' --output text
+}
+
+function list_listeners {
+	aws --region us-west-2 globalaccelerator list\
+	    -listeners --accelerator-arn $1 --query 'join(`\n`, Listeners[*].ListenerArn)' --output text
+}
+
+function list_endpoint_groups {
+	aws --region us-west-2 globalaccelerator list-endpoint-groups --listener-arn $1 --query 'join(`\n`, EndpointGroups[*].EndpointGroupArn)' --output text
+}
+
+for ga in $(list_accelerators); do
+	export NAME="$(aws --region us-west-2 globalaccelerator describe-accelerator --query Accelerator.Name --output text --accelerator-arn $ga)"
+	echo echo "INFO: disabling accelerator $NAME"
+	echo aws --region us-west-2 globalaccelerator update-accelerator --accelerator-arn $ga --no-enabled
+	echo 'while [[ $(aws --region us-west-2 globalaccelerator describe-accelerator --query Accelerator.Status --output text --accelerator-arn ' $ga ') != DEPLOYED ]]; do echo "waiting until accelerator is disabled." ; sleep 10; done'
+
+	for la in $(list_listeners $ga) ; do
+		for ea in $(list_endpoint_groups $la); do
+			echo echo "INFO: deleting endpoint group $ea from accelerator $NAME"
+			echo aws --region us-west-2 globalaccelerator delete-endpoint-group --endpoint-group-arn $ea
+		done
+		echo echo "INFO: deleting listener $ea from accelerator $NAME"
+		echo aws --region us-west-2 globalaccelerator delete-listener --listener-arn $la
+	done
+	echo echo "INFO: deleting accelerator $NAME"
+	echo aws --region us-west-2 globalaccelerator delete-accelerator --accelerator-arn $ga
+done

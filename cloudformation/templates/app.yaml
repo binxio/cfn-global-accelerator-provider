@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: demo global load balancer
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: to create the VPC in
+  PublicSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: public subnet ids
+  GlobalAcceleratorListener:
+    Type: String
+
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - LoadBalancerListener
+    Properties:
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref 'TaskDefinition'
+      DesiredCount: 2
+      LaunchType: 'FARGATE'
+      LoadBalancers:
+        - TargetGroupArn: !Ref PaasMonitorTargetGroup
+          ContainerName: paas-monitor
+          ContainerPort: 1337
+
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: !Ref 'PublicSubnets'
+          SecurityGroups:
+          - !Ref SecurityGroup
+          AssignPublicIp: 'ENABLED'
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: 'paas-monitor'
+      NetworkMode: 'awsvpc'
+      Cpu: 256
+      Memory: 512
+      ExecutionRoleArn: !Ref TaskRole
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+       - Name: 'paas-monitor'
+         Image: 'mvanholsteijn/paas-monitor:3.2.2'
+         PortMappings:
+           - ContainerPort: 1337
+
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns: 
+        - 'arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy'
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref 'VpcId'
+      GroupDescription: 'access to paas-monitor from the LB'
+      SecurityGroupIngress:
+        - Description: 'open to the load balancer'
+          FromPort: 1337
+          ToPort: 1337
+          IpProtocol: 'tcp'
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
+
+
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref 'VpcId'
+      GroupDescription: 'public access to HTTP'
+      SecurityGroupIngress:
+      - Description: 'http open to the world'
+        FromPort: 80
+        ToPort: 80
+        IpProtocol: 'tcp'
+        CidrIp: '0.0.0.0/0'
+
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets: !Ref PublicSubnets
+      SecurityGroups:
+      - !Ref ALBSecurityGroup
+
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn: !Ref PaasMonitorTargetGroup
+
+  PaasMonitorTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VpcId
+      Port: 1337
+      Protocol: HTTP
+      TargetType: ip
+      HealthCheckPath: /status          # using /status instead of /health to see the effect of toggling health on the GA
+      HealthCheckProtocol: HTTP
+
+  EndpointGroup:
+    Type: Custom::GlobalAcceleratorEndpointGroup
+    Properties:
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+      ListenerArn: !Ref GlobalAcceleratorListener
+      TrafficDialPercentage: 50
+      EndpointGroupRegion: !Ref AWS::Region
+      HealthCheckPath: /health
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 10
+      ThresholdCount: 2
+      EndpointConfigurations:
+        - EndpointId: !Ref LoadBalancer
+          Weight: 100
+
+Outputs:
+  LoadBalancerArn:
+    Value: !Ref LoadBalancer

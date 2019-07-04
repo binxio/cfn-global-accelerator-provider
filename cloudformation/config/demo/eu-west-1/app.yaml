@@ -1,0 +1,8 @@
+template_path: app.yaml
+parameters:
+  VpcId: !stack_output demo/eu-west-1/vpc.yaml::VPCID
+  PublicSubnets: !stack_output demo/eu-west-1/vpc.yaml::PublicSubnetIDs
+  GlobalAcceleratorListener: !stack_output demo/us-west-2/accelerator.yaml::GlobalAcceleratorListener
+dependencies:
+  - demo/eu-west-1/provider.yaml
+
