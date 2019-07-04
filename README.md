@@ -26,21 +26,28 @@ Resources:
           ToPort: 80
       ClientAffinity: NONE
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+```
 
+Using the Listener ARN, you can now add endpoint groups to point to your regional resources:
+
+```
   EndpointGroup:
     Type: Custom::GlobalAcceleratorEndpointGroup
     Properties:
-      ListenerArn: !Ref Listener
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+      ListenerArn: !Ref GlobalAcceleratorListener
       EndpointGroupRegion: !Ref AWS::Region
       EndpointConfigurations:
-       - EndpointId: !Ref LB
-         Weight: 100
-      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
+        - EndpointId: !Ref LoadBalancer
+          Weight: 100
 
-   LB:
-    Type: AWS::ElasticLoadBalancer:
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets: !Ref PublicSubnets
+      SecurityGroups:
+      - !Ref ALBSecurityGroup
 ```
-
 
 ### Deploy the provider
 To deploy the provider, type:
