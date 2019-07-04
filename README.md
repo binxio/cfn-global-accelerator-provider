@@ -62,5 +62,6 @@ In order to deploy the demo, type:
 
 ```sh
 cd cloudformation
+pip install sceptre
 sceptre  launch -y demo
 ```
