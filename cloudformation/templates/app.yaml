@@ -9,6 +9,9 @@ Parameters:
     Description: public subnet ids
   GlobalAcceleratorListener:
     Type: String
+  TrafficPercentage:
+    Type: Number
+    Default: 100
 
 Resources:
   Cluster:
@@ -116,7 +119,10 @@ Resources:
       Port: 1337
       Protocol: HTTP
       TargetType: ip
-      HealthCheckPath: /status          # using /status instead of /health to see the effect of toggling health on the GA
+      HealthCheckPath: /health          # using /status instead of /health to see the effect of toggling health on the GA
+      HealthCheckIntervalSeconds: 10
+      HealthCheckEnabled: true
+      HealthyThresholdCount: 2
       HealthCheckProtocol: HTTP
 
   EndpointGroup:
@@ -124,12 +130,8 @@ Resources:
     Properties:
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
       ListenerArn: !Ref GlobalAcceleratorListener
-      TrafficDialPercentage: 50
+      TrafficDialPercentage: !Ref TrafficPercentage
       EndpointGroupRegion: !Ref AWS::Region
-      HealthCheckPath: /health
-      HealthCheckProtocol: HTTP
-      HealthCheckIntervalSeconds: 10
-      ThresholdCount: 2
       EndpointConfigurations:
         - EndpointId: !Ref LoadBalancer
           Weight: 100
