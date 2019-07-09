@@ -63,7 +63,7 @@ class GlobalAcceleratorProvider(ResourceProvider):
             None,
         )
         if ip_addresses:
-            self.set_attribute("IpAddresses", ",".join(ip_addresses["IpAddresses"]))
+            self.set_attribute("IpAddresses", ip_addresses["IpAddresses"])
 
     def create(self):
         kwargs = self.create_kwargs()
