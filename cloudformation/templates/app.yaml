@@ -50,7 +50,7 @@ Resources:
         - FARGATE
       ContainerDefinitions:
        - Name: 'paas-monitor'
-         Image: 'mvanholsteijn/paas-monitor:3.2.2'
+         Image: 'mvanholsteijn/paas-monitor:3.2.3'
          PortMappings:
            - ContainerPort: 1337
 

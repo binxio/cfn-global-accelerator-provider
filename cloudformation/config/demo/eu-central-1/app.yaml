@@ -3,6 +3,6 @@ parameters:
   VpcId: !stack_output demo/eu-central-1/vpc.yaml::VPCID
   PublicSubnets: !stack_output demo/eu-central-1/vpc.yaml::PublicSubnetIDs
   GlobalAcceleratorListener: !stack_output demo/us-west-2/accelerator.yaml::GlobalAcceleratorListener
-  TrafficPercentage: '10'
+  TrafficPercentage: '50'
 dependencies:
   - demo/eu-central-1/provider.yaml
