@@ -14,15 +14,14 @@ Accelerator:
     ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
 ```
 
+You can pass in all the arguments as specified by [CreateAccelerator](https://docs.aws.amazon.com/global-accelerator/latest/api/API_CreateAccelerator.html) except the IdempotencyToken.
+
 ## Return values
 References to a resource will return the Accelerator ARN.
 
 With 'Fn::GetAtt' the following values are available:
 
-- `IPAddresses` - list of IP addresses of the global accelerator
+- `IPAddresses` - array of IP addresses of the global accelerator
 
 ## Caveats
-When AWS finally provides official CloudFormation support, you will loose the ip addresses associated with 
-the global accelerator creating using this Custom provider.  
-
-
+- The global accelerator polls until the global accelerator is deployed and may exceed the lambda maximum timeout of 15 minutes.
