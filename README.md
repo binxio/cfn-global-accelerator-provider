@@ -1,5 +1,5 @@
 # cfn-global-accelator-provider
-AWS Global Accelator is an awesome service which was announced at on November 26, 2018 but helas without CloudFormation support. This provider 
+AWS Global Accelerator is an awesome service which was announced at on November 26, 2018 but helas without CloudFormation support. This provider 
 was created within a relaxed working day and allows you to configure your accelerators, listeners and endpoint groups in CloudFormation.
 
 <!--more-->
@@ -29,7 +29,7 @@ Resources:
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
 ```
 
-In the specific Using the Listener ARN, you can now add endpoint groups to point to your regional resources:
+Using the Listener ARN, you can now add endpoint groups to point to your regional resources:
 
 ```
   EndpointGroup:
@@ -54,13 +54,13 @@ In the specific Using the Listener ARN, you can now add endpoint groups to point
 To deploy the provider, type:
 
 ```sh
-export AWS_REGION=us-west-2
-aws cloudformation create-stack \
+aws --region us-west-2 \
+    cloudformation create-stack \
         --capabilities CAPABILITY_IAM \
         --stack-name cfn-global-accelerator-provider \
         --template-body file://./cloudformation/templates/provider.yaml
 
-aws cloudformation wait stack-create-complete  --stack-name cfn-global-accelerator-provider
+aws --region us-west-2 cloudformation wait stack-create-complete  --stack-name cfn-global-accelerator-provider
 ```
 
 This CloudFormation template will use our pre-packaged provider from `s3://binxio-public/lambdas/cfn-global-accelerator-provider-0.1.1.zip`.

@@ -12,7 +12,7 @@ Listener:
     Protocol: TCP
     PortRanges:
       - FromPort: 80
-	ToPort: 80
+        ToPort: 80
     ClientAffinity: NONE
     ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
 ```
