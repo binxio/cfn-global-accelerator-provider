@@ -6,7 +6,7 @@ Parameters:
     Default: ''
   CFNCustomProviderZipFileName:
     Type: String
-    Default: 'lambdas/cfn-global-accelerator-provider-latest.zip'
+    Default: 'lambdas/cfn-global-accelerator-provider-0.1.1.zip'
     
 Conditions:
   UsePublicBucket: !Equals
