@@ -6,7 +6,7 @@ Resources:
     Type: Custom::GlobalAccelerator
     Properties:
       Name: !Sub '${AWS::StackName}'
-      Enabled: true
+      Enabled: false
       IpAddressType: IPV4
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-global-accelerator-provider'
 
@@ -25,6 +25,6 @@ Resources:
 
 Outputs:
   IpAddresses:
-    Value: !Sub '${Accelerator.IpAddresses}'
+    Value: !Join [',' , !GetAtt Accelerator.IpAddresses]
   GlobalAcceleratorListener:
     Value: !Ref Listener
