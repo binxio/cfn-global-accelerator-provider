@@ -109,5 +109,5 @@ open http://$GA_IP_ADDRESS
 ## Conclusion
 This provider was created within a relaxed working day and allows you to configure your accelerators, listeners and endpoint groups in CloudFormation.
 Although creating this temporary custom provider cost less than a day, it is not the ideal solution. It has to be created, installed and decommissioned when Amazon finally provides support for the Global Accelerator resources.
-`
+
 If it helps, I would like to offer AWS our services to ensure that CloudFormation is always on-par with the API before the feature is released.
