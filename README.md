@@ -4,8 +4,8 @@ was created within a relaxed working day and allows you to configure your accele
 
 <!--more-->
 ### How do I use it?
-Very simple, add a custom [global accelerator](docs/global-accelerator.md), [listener]((docs/global-accelerator-listener.md) and one or
-more [endpoint groups]((docs/global-accelerator-endpoint-group.md) as shown below:
+Very simple, add a custom [global accelerator](docs/global-accelerator.md), [listener](docs/global-accelerator-listener.md) and one or
+more [endpoint groups](docs/global-accelerator-endpoint-group.md) as shown below:
 
 ```
 Resources:
