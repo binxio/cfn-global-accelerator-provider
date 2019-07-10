@@ -1,0 +1,3 @@
+template_path: provider.yaml
+stack_name: cfn-global-accelerator-provider
+

@@ -1,1 +1,3 @@
 template_path: accelerator.yaml
+dependencies:
+  - demo/us-west-2/provider.yaml
