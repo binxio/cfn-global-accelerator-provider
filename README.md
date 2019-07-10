@@ -50,7 +50,7 @@ Using the Listener ARN, you can now add endpoint groups to point to your regiona
       - !Ref ALBSecurityGroup
 ```
 
--### Deploy the provider
+### Deploy the provider
 To deploy the provider, type:
 
 ```sh
@@ -64,9 +64,7 @@ aws --region us-west-2 \
 
 aws --region us-west-2 cloudformation wait stack-create-complete  --stack-name cfn-global-accelerator-provider
 ```
-
 This CloudFormation template will use our pre-packaged provider from `s3://binxio-public/lambdas/cfn-global-accelerator-provider-0.1.1.zip`.
-
 
 ### Demo
 The following tree shows the deployment configuration of our global accelerator demo:
