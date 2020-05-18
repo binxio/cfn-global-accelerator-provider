@@ -1,6 +1,8 @@
 # Custom::GlobalAcceleratorEndpointGroup resource provider
 The `Custom::GlobalAcceleratorEndpointGroup` resource type provides an AWS Global Accelerator endpoint group.
 
+deprecated: use the official [AWS::GlobalAccelerator::EndpointGroup](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-globalaccelerator-endpoint-group.html) instead.
+
 ## Syntax
 To create a global accelerator endpoint group in AWS CloudFormation template, use the following syntax:
 
