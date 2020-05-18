@@ -1,6 +1,8 @@
 # Custom::GlobalAccelerator resource provider
 The `Custom::GlobalAccelerator` resource type provides an AWS Global Accelerator.`
 
+deprecated: use the official [AWS::GlobalAccelerator:Accelerator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-globalaccelerator-accelerator.html) instead.
+
 ## Syntax
 To create a global accelerator in AWS CloudFormation template, use the following syntax:
 
