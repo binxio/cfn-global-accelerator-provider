@@ -1,6 +1,8 @@
 # Custom::GlobalAcceleratorListener resource provider
 The `Custom::GlobalAcceleratorListener` resource type provides an AWS Global Accelerator listener.
 
+deprecated: use the official [AWS::GlobalAccelerator::Listener](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-globalaccelerator-listener.html) instead.
+
 ## Syntax
 To create a global accelerator listener in AWS CloudFormation template, use the following syntax:
 
